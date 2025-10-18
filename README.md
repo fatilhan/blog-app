@@ -1,91 +1,93 @@
+> 🇹🇷 [Click here for the Turkish version.](README.tr.md)
+
 # BlogApp
 
-`BlogApp`, kullanıcıların gönderi (post), kategori ve yorum oluşturabildiği modern bir blog platformunun backend servisidir. Bu proje, **.NET 9** üzerinde, sürdürülebilir, test edilebilir ve ölçeklenebilir yazılım geliştirme prensipleri göz önünde bulundurularak, **Clean Architecture** (Temiz Mimari) kullanılarak tasarlanmıştır.
+`BlogApp` is the backend service for a modern blog platform where users can create posts, categories, and comments. This project is designed using **Clean Architecture** on **.NET 9**, keeping in mind the principles of sustainable, testable, and scalable software development.
 
-*Not: Bu proje şu an için sadece backend servislerini içermektedir. Yakın zamanda modern bir frontend teknolojisi (React, Vue, Blazor vb.) ile arayüzü geliştirilecektir.*
+*Note: This project currently includes only the backend services. A user interface will be developed soon with a modern frontend technology (React, Vue, Blazor, etc.).*
 
-## Temel Özellikler
+## Core Features
 
-- **Kullanıcı Yönetimi:** Kayıt olma, giriş yapma ve rol bazlı yetkilendirme (Admin, User).
-- **Kategoriler:** Yöneticilerin gönderileri sınıflandırmak için kategori oluşturması.
-- **Gönderiler (Posts):** Kullanıcıların belirli kategoriler altında zengin içerikli gönderiler oluşturması, güncellemesi ve silmesi.
-- **Yorumlar (Comments):** Kullanıcıların gönderilere yorum yapabilmesi.
-- **Güvenlik:** JWT (JSON Web Token) ile korunan güvenli endpoint'ler.
+- **User Management:** Registration, login, and role-based authorization (Admin, User).
+- **Categories:** Admins can create categories to classify posts.
+- **Posts:** Users can create, update, and delete rich-content posts under specific categories.
+- **Comments:** Users can comment on posts.
+- **Security:** Secure endpoints protected with JWT (JSON Web Token).
 
-## Mimari ve Tasarım Desenleri
+## Architecture and Design Patterns
 
-Projenin temelini, sorumlulukların net bir şekilde ayrıldığı **Clean Architecture** oluşturur. İş mantığı, dış bağımlılıklardan (veritabanı, arayüz, harici servisler) tamamen izole edilmiştir.
+The foundation of the project is **Clean Architecture**, which provides a clear separation of concerns. The business logic is completely isolated from external dependencies (database, UI, external services).
 
-- **Clean Architecture:** Proje, `Domain`, `Application`, `Infrastructure` ve `Presentation` olmak üzere dört ana katmana ayrılmıştır. Tüm bağımlılıklar merkeze (Domain) doğrudur.
-- **CQRS (Command Query Responsibility Segregation):** Uygulama mantığı, veri değiştiren işlemler (Command'ler) ve veri okuyan işlemler (Query'ler) olarak ikiye ayrılmıştır. Bu, sistemin daha performanslı ve yönetilebilir olmasını sağlar.
-- **MediatR Tasarım Deseni:** `Command` ve `Query`'leri, bu istekleri işleyen `Handler`'lardan ayırmak için MediatR kütüphanesi kullanılmıştır. Bu, esnek ve az bağımlı bir yapı sağlar.
+- **Clean Architecture:** The project is divided into four main layers: `Domain`, `Application`, `Infrastructure`, and `Presentation`. All dependencies point towards the center (Domain).
+- **CQRS (Command Query Responsibility Segregation):** The application logic is separated into operations that change data (Commands) and operations that read data (Queries). This makes the system more performant and manageable.
+- **MediatR Design Pattern:** The MediatR library is used to decouple `Commands` and `Queries` from their handlers. This ensures a flexible and low-coupling structure.
 
-## Kullanılan Teknolojiler ve Kütüphaneler
+## Technologies and Libraries Used
 
 - **Framework:** .NET 9
 - **API:** ASP.NET Core Web API
-- **Veritabanı:** Entity Framework Core 9
-- **Veritabanı Sağlayıcısı:** SQLite (Yerel geliştirme için)
-- **Kimlik Doğrulama ve Yetkilendirme:** ASP.NET Core Identity, JWT Bearer Tokens
-- **CQRS Implementasyonu:** MediatR
-- **Validasyon:** FluentValidation
-- **API Dokümantasyonu:** Microsoft.AspNetCore.OpenApi (.NET 9) ve Scalar Arayüzü
+- **Database:** Entity Framework Core 9
+- **Database Provider:** SQLite (for local development)
+- **Authentication & Authorization:** ASP.NET Core Identity, JWT Bearer Tokens
+- **CQRS Implementation:** MediatR
+- **Validation:** FluentValidation
+- **API Documentation:** Microsoft.AspNetCore.OpenApi (.NET 9) and Scalar UI
 
-## API Endpoint'leri
+## API Endpoints
 
-`(Yetki Gerekli)` olarak işaretlenen endpoint'ler geçerli bir JWT Bearer token gerektirir.
+Endpoints marked as `(Authorization Required)` need a valid JWT Bearer token.
 
 ### Auth
-- `POST /api/login` - Kullanıcı girişi yapar ve JWT döndürür.
-- `POST /api/register` - Yeni bir kullanıcı hesabı oluşturur.
+- `POST /api/login` - Logs in a user and returns a JWT.
+- `POST /api/register` - Creates a new user account.
 
-### Kategoriler (Categories)
-- `GET /api/categories` - Tüm kategorileri listeler.
-- `POST /api/categories` - Yeni bir kategori oluşturur. `(Admin Yetkisi Gerekli)`
-- `GET /api/categories/{id}` - Belirtilen ID'ye sahip tek bir kategoriyi getirir.
-- `PUT /api/categories/{id}` - Belirtilen kategoriyi günceller. `(Admin Yetkisi Gerekli)`
-- `DELETE /api/categories/{id}` - Belirtilen kategoriyi siler. `(Admin Yetkisi Gerekli)`
-- `GET /api/categories/{category_id}/posts` - Belirtilen kategoriye ait tüm gönderileri listeler.
+### Categories
+- `GET /api/categories` - Lists all categories.
+- `POST /api/categories` - Creates a new category. `(Admin Role Required)`
+- `GET /api/categories/{id}` - Retrieves a single category by its ID.
+- `PUT /api/categories/{id}` - Updates a specific category. `(Admin Role Required)`
+- `DELETE /api/categories/{id}` - Deletes a specific category. `(Admin Role Required)`
+- `GET /api/categories/{category_id}/posts` - Lists all posts belonging to a specific category.
 
-### Gönderiler (Posts)
-- `GET /api/posts` - Tüm gönderileri listeler (sayfalama eklenebilir).
-- `POST /api/posts` - Yeni bir gönderi oluşturur. `(Yetki Gerekli)`
-- `PUT /api/posts/{id}` - Belirtilen gönderiyi günceller. `(Yetki ve Sahiplik Kontrolü Gerekli)`
-- `DELETE /api/posts/{id}` - Belirtilen gönderiyi siler. `(Yetki ve Sahiplik/Admin Kontrolü Gerekli)`
-- `GET /api/posts/{post_id}/comments` - Belirtilen gönderiye ait tüm yorumları listeler.
+### Posts
+- `GET /api/posts` - Lists all posts (pagination can be added).
+- `POST /api/posts` - Creates a new post. `(Authorization Required)`
+- `PUT /api/posts/{id}` - Updates a specific post. `(Authorization & Ownership Required)`
+- `DELETE /api/posts/{id}` - Deletes a specific post. `(Authorization & Ownership/Admin Role Required)`
+- `GET /api/posts/{post_id}/comments` - Lists all comments for a specific post.
 
-### Yorumlar (Comments)
-- `POST /api/comments` - Bir gönderiye yeni bir yorum ekler. `(Yetki Gerekli)`
-- `PUT /api/comments/{id}` - Belirtilen yorumu günceller. `(Yetki ve Sahiplik Kontrolü Gerekli)`
-- `DELETE /api/comments/{id}` - Belirtilen yorumu siler. `(Yetki ve Sahiplik/Admin Kontrolü Gerekli)`
+### Comments
+- `POST /api/comments` - Adds a new comment to a post. `(Authorization Required)`
+- `PUT /api/comments/{id}` - Updates a specific comment. `(Authorization & Ownership Required)`
+- `DELETE /api/comments/{id}` - Deletes a specific comment. `(Authorization & Ownership/Admin Role Required)`
 
-### Kullanıcılar (Users)
-- `GET /api/users/{user_id}/posts` - Belirtilen kullanıcıya ait tüm gönderileri listeler.
+### Users
+- `GET /api/users/{user_id}/posts` - Lists all posts by a specific user.
 
-## Projeyi Çalıştırma (Getting Started)
+## Getting Started
 
-### Gerekli Araçlar
+### Prerequisites
 
 - .NET 9 SDK
-- Visual Studio 2022 Preview veya Visual Studio Code
+- Visual Studio 2022 Preview or Visual Studio Code
 
-### Kurulum Adımları
+### Installation Steps
 
-1.  **Projeyi Klonlayın:**
+1.  **Clone the Project:**
     ```sh
     git clone [https://github.com/inferna15/BlogApp.git](https://github.com/inferna15/BlogApp.git)
     cd BlogApp
     ```
 
-2.  **`appsettings.json` Dosyasını Yapılandırın:**
-    `BlogApp.Presentation` projesinin içindeki `appsettings.Development.json` dosyasını oluşturun veya düzenleyin. JWT `Secret` anahtarını **kesinlikle değiştirin.**
+2.  **Configure the `appsettings.json` File:**
+    Create or edit the `appsettings.Development.json` file inside the `BlogApp.Presentation` project. **You must change** the JWT `Secret` key.
     ```json
     {
       "ConnectionStrings": {
         "DefaultConnection": "Data Source=../BlogApp.db"
       },
       "JwtSettings": {
-        "Secret": "BU_KISIM_COK_GIZLI_VE_TAHMIN_EDILEMEZ_UZUN_BIR_ANAHTAR_OLMALI_EN_AZ_32_KARAKTER",
+        "Secret": "THIS_PART_MUST_BE_A_VERY_SECRET_AND_UNPREDICTABLE_LONG_KEY_AT_LEAST_32_CHARACTERS",
         "Issuer": "[https://api.blogapp.com](https://api.blogapp.com)",
         "Audience": "[https://webapp.blogapp.com](https://webapp.blogapp.com)",
         "ExpiryMinutes": 60
@@ -93,27 +95,25 @@ Projenin temelini, sorumlulukların net bir şekilde ayrıldığı **Clean Archi
     }
     ```
 
-3.  **Veritabanını Oluşturun (Migration):**
-    Projenin veritabanı şemasını oluşturmak için çözümün ana dizininde bir terminal açın ve aşağıdaki komutları çalıştırın:
+3.  **Create the Database (Migration):**
+    To create the project's database schema, open a terminal in the solution's root directory and run the following commands:
     ```sh
-    # dotnet-ef aracının yüklü olduğundan emin olun: dotnet tool install --global dotnet-ef
+    # Make sure dotnet-ef tool is installed: dotnet tool install --global dotnet-ef
     dotnet ef database update --startup-project BlogApp.Presentation
     ```
-    Bu komut, `BlogApp.db` adında bir SQLite veritabanı dosyası oluşturacak ve başlangıç verilerini (Admin kullanıcısı, kategoriler vb.) ekleyecektir.
+    This command will create an SQLite database file named `BlogApp.db` and seed it with initial data (Admin user, categories, etc.).
 
-4.  **Uygulamayı Çalıştırın:**
+4.  **Run the Application:**
     ```sh
     dotnet run --project BlogApp.Presentation
     ```
-    Uygulama varsayılan olarak `https://localhost:7122` ve `http://localhost:5012` gibi portlarda başlayacaktır.
+    The application will start on ports like `https://localhost:7122` and `http://localhost:5012` by default.
 
-## API'yi Test Etme
+## Testing the API
 
-1.  Uygulama çalıştıktan sonra tarayıcınızda, API dokümantasyonu için yapılandırılan adrese gidin (örn: `https://localhost:7122/docs`).
-2.  Scalar arayüzü karşınıza çıkacaktır.
-3.  `POST /api/register` endpoint'ini kullanarak yeni bir kullanıcı kaydedin.
-4.  `POST /api/login` endpoint'ini kullanarak giriş yapın ve dönen `token`'ı kopyalayın.
-5.  Scalar arayüzünün üst kısmındaki **"Authentication"** bölümüne tıklayın ve kopyaladığınız token'ı "Bearer Token" alanına yapıştırın.
-6.  Artık `[Authorize]` ile korunan (yanında kilit ikonu olan) endpoint'lere başarılı bir şekilde istek atabilirsiniz.
-
----
+1.  After the application is running, navigate to the configured address for the API documentation in your browser (e.g., `https://localhost:7122/docs`).
+2.  The Scalar interface will appear.
+3.  Register a new user using the `POST /api/register` endpoint.
+4.  Log in using the `POST /api/login` endpoint and copy the returned `token`.
+5.  Click on the **"Authentication"** section at the top of the Scalar interface and paste the copied token into the "Bearer Token" field.
+6.  You can now successfully make requests to endpoints protected with `[Authorize]` (those with a lock icon next to them).
